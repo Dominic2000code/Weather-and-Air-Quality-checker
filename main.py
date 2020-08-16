@@ -86,10 +86,12 @@ class WeatherApp:
         if self.zipcode_entry.get() == "":
             messagebox.showerror("Empty Field", "Please input ZipCode in the field")
             ZipCodeFrame.destroy()
+            self.clear_field()
 
         elif data == "Error":
             messagebox.showerror("Wrong ZipCode", "Please limit ZipCode to US")
             ZipCodeFrame.destroy()
+            self.clear_field()
 
         else:
             airQualityLabel = Label(ZipCodeFrame,
@@ -128,9 +130,10 @@ class WeatherApp:
             self.weather_description = data['current']['weather_descriptions'][0]
 
             url = self.weather_icons
-            resp = requests.get(url, stream=True).raw
+            self.resp = requests.get(url, stream=True).raw
 
-            # print(self.city_name,self.country,self.region,self.temperature,self.weather_icons,self.wind,self.pressure,self.precip,self.weather_description)
+            # print(self.city_name,self.country,self.region,self.temperature,self.weather_icons,self.wind,self.pressure,
+            # self.precip,self.weather_description)
 
         except Exception as e:
             data = 'error'
@@ -138,9 +141,12 @@ class WeatherApp:
         if self.city_entry.get() == "":
             messagebox.showerror("Empty Field", "Please input a City in the field")
             cityFrame.destroy()
+            self.clear_field()
 
         elif data == 'error':
             messagebox.showerror("Wrong City", "Please input correct City")
+            cityFrame.destroy()
+            self.clear_field()
 
         else:
             self.location_label = Label(cityFrame, text='{}, {}'.format(self.city_name, self.country),
@@ -148,7 +154,7 @@ class WeatherApp:
             self.location_label.grid(row=0, column=1, pady=(20, 10), sticky=NSEW)
 
             # Icon frame
-            self.myImg = ImageTk.PhotoImage(Image.open(resp))
+            self.myImg = ImageTk.PhotoImage(Image.open(self.resp))
             self.iconLabel = Label(cityFrame, padx=10, pady=10, image=self.myImg)
             self.iconLabel.grid(row=1, column=0, pady=(15, 15), padx=(10, 0))
             self.weatherDescription = Label(cityFrame, text="{}".format(self.weather_description), font=('Courier', 14),
